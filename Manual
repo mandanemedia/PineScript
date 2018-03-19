@@ -1,0 +1,12 @@
+//https://www.tradingview.com/study-script-reference/#fun_security
+
+//Define a study
+study(title="MA Signals", shorttitle="MA_signals", overlay=true)
+
+//Input variable  
+//input(defval, title, type) → series
+LenghtA=input(5, title="Lenght A") // Number
+Hourly=input(4, title="Hourly", type=integer) // Interger Number  
+threshold = input(title="Price Difference Threshold", type=float, defval=0, step=0.001) //float numer
+Source=input(close, title="Source label" ) // open/close, etc
+indicatorAggresive=input(title="Indicator On/Off", type=bool, defval=true) // checkbox
