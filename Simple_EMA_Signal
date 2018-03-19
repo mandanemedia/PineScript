@@ -21,6 +21,16 @@ plot(outB, color=lime, linewidth=2, title="2nd EMA")
 buy = outA > outB and cross(outA, outB) and indicator
 sell = outA < outB and cross(outA, outB) and indicator
 
+// outA and outB are array of number, basily buy and sell are an array of boolean
+// Example outA = [1,2,3,4,5,6,7,8,9]
+// Example outB = [9,8,7,6,5,4,3,2,1]
+// Example buy =  [0,0,0,0,0,1,1,1,1] given outA > outB
+// Example sell = [1,1,1,1,0,0,0,0,0] given outA < outB
+
+// By adding cross we are going to only have one buy or sell signal after crossing in the plot
+// Example buy =  [0,0,0,0,0,1,0,0,0] given outA > outB and cross(outA, outB)
+// Example sell = [0,0,0,1,0,0,0,0,0] given outA < outB and cross(outA, outB)
+
 //Plots visual shapes on the chart.
 //plotshape(series, title, style, location, color, transp, offset, text, textcolor, editable, size, show_last) → void
 plotshape(buy, color=green, location=location.belowbar, style=shape.flag, transp=10, text="Buy")
