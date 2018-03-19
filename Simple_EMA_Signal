@@ -1,0 +1,27 @@
+//Define a study
+study(title="EMA Signals", shorttitle="EMA_signals", overlay=true)
+//EMA_signals(5, 20, close, true)
+
+//Input variable  
+//input(defval, title, type) → series
+LenghtA=input(5, title="1st EMA")  
+LenghtB=input(20, title="2nd EMA") 
+Source=input(close, title="Source")  
+indicator=input(title="Indicator On/Off", type=bool, defval=true)
+
+//sma(source, length) → series
+outA= ema(Source, LenghtA)
+outB= ema(Source, LenghtB)
+
+// plot(series, title, color, linewidth, style, trackprice, transp, histbase, offset, join, editable, show_last) → plot
+plot(outA, color=blue, linewidth=2, title="1st EMA")
+plot(outB, color=lime, linewidth=2, title="2nd EMA")
+
+//create buy and sell condition
+buy = outA > outB and cross(outA, outB) and indicatorAggresive
+sell = outA < outB and cross(outA, outB) and indicatorAggresive
+
+//Plots visual shapes on the chart.
+//plotshape(series, title, style, location, color, transp, offset, text, textcolor, editable, size, show_last) → void
+plotshape(buy, color=green, location=location.belowbar, style=shape.flag, transp=10, text="Buy")
+plotshape(sell, color=red, location=location.abovebar, style=shape.flag, transp=10, text="Sell")
