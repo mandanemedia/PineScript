@@ -18,8 +18,8 @@ plot(outA, color=blue, linewidth=2, title="1st EMA")
 plot(outB, color=lime, linewidth=2, title="2nd EMA")
 
 //create buy and sell condition
-buy = outA > outB and cross(outA, outB) and indicatorAggresive
-sell = outA < outB and cross(outA, outB) and indicatorAggresive
+buy = outA > outB and cross(outA, outB) and indicator
+sell = outA < outB and cross(outA, outB) and indicator
 
 //Plots visual shapes on the chart.
 //plotshape(series, title, style, location, color, transp, offset, text, textcolor, editable, size, show_last) → void
