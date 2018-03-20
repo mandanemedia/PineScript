@@ -1,4 +1,5 @@
-//https://www.tradingview.com/study-script-reference/#fun_security
+//https://www.tradingview.com/study-script-reference/
+//https://www.tradingview.com/wiki/Pine_Compilation_Errors
 
 //Define a study
 study(title="MA Signals", shorttitle="MA_signals", overlay=true)
@@ -10,3 +11,7 @@ Hourly=input(4, title="Hourly", type=integer) // Interger Number
 threshold = input(title="Price Difference Threshold", type=float, defval=0, step=0.001) //float numer
 Source=input(close, title="Source label" ) // open/close, etc
 indicatorAggresive=input(title="Indicator On/Off", type=bool, defval=true) // checkbox
+
+//Defining a function and it return the variable in the last line
+f2(x) =>
+     a = x + a[1]
