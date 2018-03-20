@@ -1,0 +1,53 @@
+//@version=3
+//study("Volume and Price", overlay=true)
+strategy("Volume and Price testing", shorttitle="Volume_Price", overlay=false)
+
+//BTCUSD Bitmex 3 mins highLimit=11000000 defval=0.24
+highLimit = input(12000000, title="Volume Increase Trigger" )
+priceLimit = input(title="Price Change buy/sell", type=float, defval=0.24, step=0.1 )
+//closeLimit = input(title="Price Change close Position", type=float, defval=0.08, step=0.1 )
+
+triggerHigh = priceLimit
+triggerLow = (-1)*priceLimit
+
+//closeLimitHigh = closeLimit
+//closeLimitLow = (-1)*closeLimit
+
+hline(0, title="zero line")
+hline(triggerHigh , title="High Price Long/Short")
+hline(triggerLow , title="Low Price Long/Short")
+//hline(closeLimitHigh , title="High Price Close")
+//hline(closeLimitLow , title="Low Price Close")
+
+Source = input(open)
+
+getPriceDiff() =>
+    previousCandle = Source[0]
+    currentCandle = Source[1]
+    percentage=(previousCandle/currentCandle-1)*100
+    
+getVolumeDiff() =>
+    Trigger= volume[0] > highLimit ? true : false
+
+//XBTUSD     if 3 minute volume > 30,000,000 AND that same 3 minute candle PRICE CHANGE > 1.67% then provide value 8(edited)
+//XBTUSD     if 3 minute volume > 30,000,000 AND that same 3 minute candle PRICE CHANGE <- 1.67% then provide value -8(edited)
+//That price calculation is calculated using the 3 minute high and low, in real time. Shouldn’t have to wait for the candle to close
+
+modifiedPrice = getPriceDiff()
+plot(modifiedPrice)
+
+modifiedVol = (getVolumeDiff() ) ? blue : na
+bgcolor(modifiedVol)
+// plotshape(modifiedVol, color=green, style=shape.flag, transp=10)
+
+long = modifiedPrice > triggerHigh  and  getVolumeDiff() // and cross(modifiedPrice, triggerHigh)
+short = modifiedPrice < triggerLow and getVolumeDiff()  // and cross(modifiedPrice, triggerHigh)
+
+trade = (long ? green : short ? red : na)
+bgcolor(trade)
+
+if (long)
+    strategy.entry("Long", strategy.long)
+
+if (short)
+    strategy.entry("Short", strategy.short)
