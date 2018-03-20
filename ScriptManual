@@ -1,5 +1,6 @@
 //https://www.tradingview.com/study-script-reference/
 //https://www.tradingview.com/wiki/Pine_Compilation_Errors
+//https://www.tradingview.com/wiki/Pine_Version_3_Migration_Guide
 
 //Define a study
 study(title="MA Signals", shorttitle="MA_signals", overlay=true)
@@ -12,6 +13,26 @@ threshold = input(title="Price Difference Threshold", type=float, defval=0, step
 Source=input(close, title="Source label" ) // open/close, etc
 indicatorAggresive=input(title="Indicator On/Off", type=bool, defval=true) // checkbox
 
+
+plot(outA, color=blue, linewidth=2, title="1st EMA")
+plot(outB, color=lime, linewidth=2, title="2nd EMA")
+//create buy and sell condition
+buy = outA > outB and cross(outA, outB) and indicator
+// plot(series, title, color, linewidth, style, trackprice, transp, histbase, offset, join, editable, show_last) → plot
+plot(outA, color=blue, linewidth=2, title="1st EMA")
+//plotshape(series, title, style, location, color, transp, offset, text, textcolor, editable, size, show_last) → void
+
+
+
+
 //Defining a function and it return the variable in the last line
 f2(x) =>
      a = x + a[1]
+     
+     
+//Self Referencing Variables: The ability to reference the previous values of declared variables in expressions where they are
+//declared (using the operator []) is a useful feature in Pine. For Example:
+study("Fibonacci numbers")
+fib = na(fib[1]) or na(fib[2]) ? 1 : fib[1] + fib[2]
+
+//The variable ‘fib’ is a series of Fibonacci numbers : 1, 1, 2, 3, 5, 8, 13, 21
