@@ -1,6 +1,8 @@
 //https://www.tradingview.com/study-script-reference/
 //https://www.tradingview.com/wiki/Pine_Compilation_Errors
 //https://www.tradingview.com/wiki/Pine_Version_3_Migration_Guide
+//https://backtest-rookies.com/2018/02/09/tradingview-pinescript-debugging-plotting-tips-tricks/
+//http://www.pinescripts.com/en/cat/tips-and-tricks/
 
 //Define a study
 study(title="MA Signals", shorttitle="MA_signals", overlay=true)
