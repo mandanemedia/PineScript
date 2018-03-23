@@ -1,17 +1,19 @@
 //@version=2
 strategy("Higher TF Price Differential - Dan", shorttitle="HigherTFPriceDifferential", overlay=false)
 
-
-Source=input(hlc3, title="Input Source" )
 Hourly=input(4, title="Hourly Higher Time frame", type=integer)
-thresholdLimit = input(title="Threshold Limit", type=float, defval=1.4, step=0.2)
+thresholdLimit = input(title="Threshold Limit", type=float, defval=0.6, step=0.2)
+
 //This is to get the price differential
 //between previous 4 hours candle (defualt 4 hours) and current 4 hours candle
-//problem closing price of 4 hour candle is fluctuating, hence in reality this does not work.
-getDiff_1() =>
+//resolving the closing price of 4 hour candle is fluctuating, hence in reality this does not work.
+getDiff() =>
     TimeFrame=Hourly*60
-    yesterday=security(tickerid, tostring(TimeFrame), Source[1], false)
-    today=security(tickerid, tostring(TimeFrame), Source, false)
+    yesterday =security(tickerid, tostring(TimeFrame), hlc3[1], false)
+    today_open =security(tickerid, tostring(TimeFrame), open, false)
+    today_high =security(tickerid, tostring(TimeFrame), high, false)
+    today_low =security(tickerid, tostring(TimeFrame), low, false)
+    today = (today_open + today_high + today_low )/3
     percentage=((today-yesterday)/yesterday)*100
     
 closeDiff = getDiff()
