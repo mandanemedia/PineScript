@@ -1,0 +1,41 @@
+//@version=2
+strategy("Multiple Higher TF Price Differential - Dan", shorttitle="MultipleHigherTFPriceDifferential", overlay=false)
+
+//30 mins 3rd setup: (24, close, 0.55, 48)
+//30 mins 3rd setup: (12, close, 0.55, 48)
+//30 mins 3rd setup: (4, close, 0.55, 48)
+Hourly=input(12, title="Hourly Higher Time frame", type=integer)
+Source=input(close, title="Input Source" )
+thresholdLimit = input(title="Threshold Limit", type=float, defval=0.55, step=0.05)
+thresholdMA=input(48, title="Threshold Moving Average", type=integer)
+
+getDiff() =>
+    TimeFrame=Hourly*60
+    yesterday =security(tickerid, tostring(TimeFrame), Source[1], false)
+    today_open =security(tickerid, tostring(TimeFrame), open, false)
+    today_high =security(tickerid, tostring(TimeFrame), high, false)
+    today_low =security(tickerid, tostring(TimeFrame), low, false)
+    today =  (today_open + today_high + today_low )/3
+    percentage= ((today-yesterday)/yesterday)*100
+    
+closeDiff = getDiff()
+threshold = ema(closeDiff, thresholdMA) * thresholdLimit
+buying = closeDiff > threshold and  closeDiff > -threshold ? true : closeDiff < -threshold and closeDiff < threshold ? false : buying[1]
+
+plotcolor = buying ? blue : red 
+hline(0, color=color(black,90) , linewidth=2,  title="zero line")
+bgcolor(plotcolor, transp=85 )
+plot(closeDiff, color=plotcolor, linewidth=2, title="Price Differential")
+plot(threshold, color=color(teal,80) , linewidth=2,  title="Threshold High")
+plot((-1*threshold), color=color(teal,80) , linewidth=2,  title="Threshold High")
+
+if (buying)
+    strategy.entry("Long", strategy.long)
+
+if (buying != true)
+    strategy.entry("Short", strategy.short)
+    
+every4Hours() =>
+    t = time('240')
+    change(t) != 0 ? black : na
+bgcolor(every4Hours(), transp=85 )
