@@ -4,13 +4,12 @@ strategy("Multiple Higher TF Price Differential - Dan", shorttitle="MultipleHigh
 //30 mins 3rd setup: (24, close, 0.55, 48)
 //30 mins 3rd setup: (12, close, 0.55, 48)
 //30 mins 3rd setup: (4, close, 0.55, 48)
-Hourly=input(12, title="Hourly Higher Time frame", type=integer)
 Source=input(close, title="Input Source" )
 thresholdLimit = input(title="Threshold Limit", type=float, defval=0.55, step=0.05)
 thresholdMA=input(48, title="Threshold Moving Average", type=integer)
 
-getDiff() =>
-    TimeFrame=Hourly*60
+getDiff(givenTF) =>
+    TimeFrame=givenTF*60
     yesterday =security(tickerid, tostring(TimeFrame), Source[1], false)
     today_open =security(tickerid, tostring(TimeFrame), open, false)
     today_high =security(tickerid, tostring(TimeFrame), high, false)
@@ -18,16 +17,19 @@ getDiff() =>
     today =  (today_open + today_high + today_low )/3
     percentage= ((today-yesterday)/yesterday)*100
     
-closeDiff = getDiff()
-threshold = ema(closeDiff, thresholdMA) * thresholdLimit
-buying = closeDiff > threshold and  closeDiff > -threshold ? true : closeDiff < -threshold and closeDiff < threshold ? false : buying[1]
+getBuyingSignals(givenTF) =>   
+    closeDiff = getDiff(givenTF)
+    threshold = ema(closeDiff, thresholdMA) * thresholdLimit
+    buying = closeDiff > threshold and  closeDiff > -threshold ? true : closeDiff < -threshold and closeDiff < threshold ? false : buying[1]
 
+x = getBuyingSignals(24)
+y = getBuyingSignals(12)
+z = getBuyingSignals(4)
+
+//if among 24,12,4 buying signals at least 2 of them is buy, then signal for buy
+buying = (x==y and x) or (x==z and x) or (y==z and y) ? true : false
 plotcolor = buying ? blue : red 
-hline(0, color=color(black,90) , linewidth=2,  title="zero line")
 bgcolor(plotcolor, transp=85 )
-plot(closeDiff, color=plotcolor, linewidth=2, title="Price Differential")
-plot(threshold, color=color(teal,80) , linewidth=2,  title="Threshold High")
-plot((-1*threshold), color=color(teal,80) , linewidth=2,  title="Threshold High")
 
 if (buying)
     strategy.entry("Long", strategy.long)
