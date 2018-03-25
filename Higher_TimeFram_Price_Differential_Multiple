@@ -1,9 +1,12 @@
 //@version=2
 strategy("Multiple Higher TF Price Differential - Dan", shorttitle="MultipleHigherTFPriceDifferential", overlay=false)
 
-//30 mins 3rd setup: (24, close, 0.55, 48)
-//30 mins 3rd setup: (12, close, 0.55, 48)
-//30 mins 3rd setup: (4, close, 0.55, 48)
+//Some good setup:
+// (24,12,4, close, 0.55, 48)
+// (24,6,4, close, 0.55, 48)
+TF1=input(24, title="1st Higher Time Frame", type=integer)
+TF2=input(6, title="2nd Higher Time Frame", type=integer)
+TF3=input(4, title="3rd Higher Time Frame", type=integer)
 Source=input(close, title="Input Source" )
 thresholdLimit = input(title="Threshold Limit", type=float, defval=0.55, step=0.05)
 thresholdMA=input(48, title="Threshold Moving Average", type=integer)
@@ -22,9 +25,9 @@ getBuyingSignals(givenTF) =>
     threshold = ema(closeDiff, thresholdMA) * thresholdLimit
     buying = closeDiff > threshold and  closeDiff > -threshold ? true : closeDiff < -threshold and closeDiff < threshold ? false : buying[1]
 
-x = getBuyingSignals(24)
-y = getBuyingSignals(12)
-z = getBuyingSignals(4)
+x = getBuyingSignals(TF1)
+y = getBuyingSignals(TF2)
+z = getBuyingSignals(TF3)
 
 //if among 24,12,4 buying signals at least 2 of them is buy, then signal for buy
 buying = (x==y and x) or (x==z and x) or (y==z and y) ? true : false
