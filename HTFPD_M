@@ -1,5 +1,5 @@
 //@version=2
-strategy("Multiple Higher TF Price Differential - Dan", shorttitle="HTFPD_M", overlay=false)
+strategy("HTFPD_M", shorttitle="HTFPD_M", overlay=false)
 
 //Some good setup:
 // (24,12,4, close, 0.55, 48)
