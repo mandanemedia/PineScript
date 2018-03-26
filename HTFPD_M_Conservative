@@ -1,0 +1,53 @@
+//@version=2
+strategy("HTFPD Multiple Conservative", shorttitle="HTFPD_M_Conservative", overlay=false)
+
+Source=input(close, title="Input Source" )
+thresholdLimit = input(title="Threshold Limit", type=float, defval=0.55, step=0.05)
+thresholdMA=input(48, title="Threshold Moving Average", type=integer)
+
+getDiff(givenTF) =>
+    TimeFrame=givenTF*60
+    yesterday =security(tickerid, tostring(TimeFrame), Source[1], false)
+    today_open =security(tickerid, tostring(TimeFrame), open, false)
+    today_high =security(tickerid, tostring(TimeFrame), high, false)
+    today_low =security(tickerid, tostring(TimeFrame), low, false)
+    today =  (today_open + today_high + today_low )/3
+    percentage= ((today-yesterday)/yesterday)*100
+    
+getBuyingSignals(givenTF) =>   
+    closeDiff = getDiff(givenTF)
+    threshold = ema(closeDiff, thresholdMA) * thresholdLimit
+    buying = closeDiff > threshold and  closeDiff > -threshold ? true : closeDiff < -threshold and closeDiff < threshold ? false : buying[1]
+    
+TF1=24
+TF21=12
+TF3=4
+x = getBuyingSignals(TF1)
+y1 = getBuyingSignals(TF21)
+z = getBuyingSignals(TF3)
+
+TF22=6
+y2 = getBuyingSignals(TF22)
+
+buying_1 = (x==y1 and x) or (x==z and x) or (y1==z and y1) ? true : false
+buying_2 = (x==y2 and x) or (x==z and x) or (y2==z and y2) ? true : false
+
+plotcolor = (buying_1 == buying_2 and buying_1) ? blue : (buying_1 == buying_2 and (not buying_1))? red : na
+bgcolor(plotcolor, transp=85 )
+
+signal = (buying_1 == buying_2 and buying_1) ? 1 : (buying_1 == buying_2 and (not buying_1))? -1 : 0
+
+if (signal[0] != signal[1] and signal[0] == 1 )
+    strategy.entry("Long", strategy.long)
+
+if  (signal[0] != signal[1] and signal[0] == -1 )
+    strategy.entry("Short", strategy.short)
+
+if  (signal[0] != signal[1] and signal[0] == 0 )
+    strategy.close_all(true)
+
+    
+every4Hours() =>
+    t = time('240')
+    change(t) != 0 ? black : na
+bgcolor(every4Hours(), transp=85 )
