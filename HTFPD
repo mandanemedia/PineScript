@@ -1,5 +1,5 @@
 //@version=2
-strategy("Higher TF Price Differential - Dan", shorttitle="HigherTFPriceDifferential", overlay=false)
+strategy("Higher TF Price Differential - Dan", shorttitle="HTFPD", overlay=false)
 
 //30 mins initial setup: (4, ohlc4, 0.4, 32)
 //30 mins 1st setup (4, ohlc4, 1.7, 33)
