@@ -1,5 +1,5 @@
 //@version=2
-study("Alert Multiple Higher TF Price Differential", shorttitle="HTFPD_M_Alert", overlay=false)
+study("HTFPD_M_Alert", shorttitle="HTFPD_M_Alert", overlay=false)
 
 TF1=input(24, title="1st Higher Time Frame", type=integer)
 TF2=input(12, title="2nd Higher Time Frame", type=integer)
