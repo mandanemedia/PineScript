@@ -1,5 +1,5 @@
 //@version=2
-strategy("HTFPD Multiple Conservative", shorttitle="HTFPD_M_Conservative", overlay=false)
+strategy("HTFPD_M_Conservative", shorttitle="HTFPD_M_Conservative", overlay=false)
 
 Source=input(close, title="Input Source" )
 thresholdLimit = input(title="Threshold Limit", type=float, defval=0.55, step=0.05)
