@@ -1,0 +1,36 @@
+//@version=3
+//@author DanialJ
+strategy(title="BTC longs vs Short", shorttitle="BTC Long/Short")
+
+// Inputs from user
+source=input(ohlc4, title="Input Source" )
+alwaysLong=input(20000, title="Always Long", type=integer)
+alwaysShort=input(10000, title="Always Short", type=integer)
+MALenght=input(77, title="MA Length", type=integer)
+
+// Security
+currentLongs = security("BITFINEX:BTCUSDLONGS", period, source)
+currentShorts = security("BITFINEX:BTCUSDSHORTS", period, source)
+
+// Functions
+normalizedLongs = currentLongs - (alwaysLong*0.90)
+normalizedShorts = currentShorts - (alwaysShort*0.90)
+
+// Val
+ratio = nz(normalizedLongs / normalizedShorts)
+average = ema(ratio, MALenght) 
+// Plots
+color = ratio>average ? blue : red
+plot(ratio, style=line,  linewidth=2, color=color)
+bgcolor(color, transp=85 )
+plot(average, style=line,  linewidth=1, color=black)
+//plot(normalizedLongs, style=line,  linewidth=1, color=blue)
+//plot(normalizedShorts, style=line,  linewidth=1, color=red)
+hline(0, color=color(black,90) , linewidth=2,  title="zero line")
+
+
+if ( ratio> average)
+    strategy.entry("Long", strategy.long)
+
+if (ratio< average)
+    strategy.entry("Short", strategy.short)
