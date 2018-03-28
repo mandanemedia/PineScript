@@ -3,32 +3,31 @@
 strategy(title="BTC longs vs Short ", shorttitle="BTC Long/Short")
 
 // Inputs from user
+// 4hours ohlc4, 7000, 13
+// 30mins ohlc4, 8500, 235
 source=input(ohlc4, title="Input Source" )
-deduction=input(7000, title="Always Long", type=integer,  step=500)
-MALenght=input(13, title="MA Length", type=integer)
+deduction=input(8500, title="Always Long", type=integer,  step=500)
+MALenghtSlow=input(235, title="MA Length", type=integer)
 
 // Security
 Longs = security("BITFINEX:BTCUSDLONGS", period, source, false) - deduction
 Shorts = security("BITFINEX:BTCUSDSHORTS", period, source, false)
 
-
-
-pLongs = Longs[1]
-pShorts = Shorts[1]
-diffLongs= (Longs-pLongs)/ pLongs
-diffShorts= (Shorts-pShorts)/ pShorts 
+diffLongs= (Longs[0]-Longs[1])/ Longs[1]
+diffShorts= (Shorts[0]-Shorts[1])/ Shorts[1] 
    
-ratioChange = (pLongs - pShorts) / (pShorts+pLongs)
-average = ema(ratioChange, MALenght) 
+ratioChange = (Longs[0] - Shorts[0]) / (Shorts[0]+Longs[0])
+averageSlow = ema(ratioChange, MALenghtSlow) 
 
-color = ratioChange>average ? blue : red
+color = ratioChange>averageSlow ? blue : red
 plot(ratioChange, style=line,  linewidth=2, color=color)
 bgcolor(color, transp=85 )
-plot(average, style=line,  linewidth=1, color=black)
+plot(averageSlow, style=line,  linewidth=1, color=black)
 
+//hline(0, color=color(black,90) , linewidth=2,  title="zero line")
 
-if ( ratioChange> average)
+if ( ratioChange> averageSlow)
     strategy.entry("Long", strategy.long)
 
-if (ratioChange< average)
+if (ratioChange< averageSlow)
     strategy.entry("Short", strategy.short)
