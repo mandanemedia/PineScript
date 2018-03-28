@@ -3,7 +3,7 @@
 strategy(title="BTC longs vs Short", shorttitle="BTC Long/Short")
 
 // Inputs from user
-source=input(ohlc4, title="Input Source" )
+source=input(close, title="Input Source" )
 alwaysLong=input(20000, title="Always Long", type=integer)
 alwaysShort=input(10000, title="Always Short", type=integer)
 MALenght=input(77, title="MA Length", type=integer)
