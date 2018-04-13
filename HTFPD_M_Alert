@@ -7,6 +7,7 @@ TF3=input(4, title="3rd Higher Time Frame", type=integer)
 Source=input(close, title="Input Source" )
 thresholdLimit = input(title="Threshold Limit", type=float, defval=0.55, step=0.05)
 thresholdMA=input(48, title="Threshold Moving Average", type=integer)
+showSignals=input(title="Display Signals On/Off", type=bool, defval=true)
 
 getDiff(givenTF) =>
     TimeFrame=givenTF*60
@@ -29,10 +30,13 @@ z = getBuyingSignals(TF3)
 //if among 24,12,4 buying signals at least 2 of them is buy, then signal for buy
 buying = (x==y and x) or (x==z and x) or (y==z and y) ? true : false
 
-//alertTrigger = ( x==y and cross(x[0],x[1]) ) or (x==y and cross(y[0],y[1])) or (y==z and cross(z[0],z[1]))
-alertTrigger = cross(buying[0], buying[1]) 
-plot(barssince(alertTrigger))
-alertcondition(alertTrigger , title='Multiple Higher TF differential', message='Multiple Higher TF Price differential 24,12,4')
+alertTrigger = buying[0] != buying[1] //  cross(buying[0], buying[1])
+alertcondition(alertTrigger , title= 'HTFPD_M_Alert', message='24,12, 4')
+
+goLong = buying and alertTrigger ? 1 : 0
+goShort = (not buying) and alertTrigger ? 1 : 0
+plot(goLong, color=color(blue, 50), linewidth=1, title="Long")
+plot(goShort, color=color(red, 50), linewidth=1, title="Short")
 
 plotcolor = buying ? blue : red 
 bgcolor(plotcolor, transp=85 )
@@ -40,4 +44,4 @@ bgcolor(plotcolor, transp=85 )
 every4Hours() =>
     t = time('240')
     change(t) != 0 ? black : na
-bgcolor(every4Hours(), transp=85 )
+//bgcolor(every4Hours(), transp=85 )
