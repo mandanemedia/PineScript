@@ -1,0 +1,51 @@
+//@version=2
+strategy("HTFPD_2", shorttitle="HTFPD_2", overlay=false)
+
+Hourly=input(4, title="Hourly Higher TF", type=integer)
+current=input(5, title="current TF", type=integer) //Resolution
+Source=input(close, title="Input Source" )
+thresholdLimit = input(title="Threshold Limit", type=float, defval=0.55, step=0.05)
+thresholdMA=input(48, title="Threshold Moving Average", type=integer)
+addVolume=input(title="Apply Volume", type=bool, defval=false) 
+
+//if Apply Volume checked, the perfomance still is better without volume
+VolDiff() =>
+    diff = (volume[0]-volume[1]/volume[1])
+    volEffect = diff > 0.01 ? 1 : (diff/(25/100)) // %25 of positive volume diff effect on price  
+
+
+//This is to get the price differential between previous 4 hours candle (defualt 4 hours) and current 4 hours candle
+//resolving the closing price of 4 hour candle which is fluctuating 
+getDiff() =>
+    TimeFrame=Hourly*60
+    yesterday =security(tickerid, tostring(TimeFrame), Source[1], false)
+    today_close =security(tickerid, tostring(TimeFrame), close, false)
+    today_high =security(tickerid, tostring(TimeFrame), high, false)
+    today_low =security(tickerid, tostring(TimeFrame), low, false)
+    today =  (today_close + today_high + today_low )/3
+    percentage= addVolume ?  VolDiff()*((today-yesterday)/yesterday)*100 :((today-yesterday)/yesterday)*100 
+   
+closeDiff = getDiff()
+threshold = addVolume ? vwma(closeDiff, thresholdMA) * thresholdLimit : ema(closeDiff, thresholdMA) * thresholdLimit
+buying = closeDiff > threshold and  closeDiff > -threshold ? true : closeDiff < -threshold and closeDiff < threshold ? false : buying[1]
+
+plotcolor = buying ? blue : red 
+hline(0, color=color(black,90) , linewidth=2,  title="zero line")
+bgcolor(plotcolor, transp=85 )
+plot(closeDiff, color=plotcolor, linewidth=2, title="Price Differential")
+plot(threshold, color=color(teal,80) , linewidth=2,  title="Threshold High")
+plot((-1*threshold), color=color(teal,80) , linewidth=2,  title="Threshold High")
+
+alertTrigger = buying[0] != buying[1] 
+alertcondition(alertTrigger , title='Higher TF differential', message="Higher TF Price differential")
+
+if ( buying)
+    strategy.entry("Long", strategy.long)
+    
+if(not buying)
+    strategy.entry("Short", strategy.short)
+
+every4Hours() =>
+    t = time('240')
+    change(t) != 0 ? black : na
+bgcolor(every4Hours(), transp=85 )
