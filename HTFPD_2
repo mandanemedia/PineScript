@@ -1,9 +1,10 @@
 //@version=2
 strategy("HTFPD_2", shorttitle="HTFPD_2", overlay=false)
 
-//30 mins 3rd setup: (4, hlc3, 0.85, 44)
-//30 mins 3rd setup: (4, close, 0.55, 65)
-//30 mins 3rd setup: (12, close, 0.55, 48)
+// 4, 5, ohlc4, 0.9
+// 12,5, ohlc4, 1.05
+// 24,5, ohlc4, 0.55
+// 48,5, ohlc4, 0.55
 Hourly=input(4, title="Hourly Higher TF", type=integer)
 current=input(5, title="current TF", type=integer) //Resolution
 Source=input(close, title="Input Source" )
